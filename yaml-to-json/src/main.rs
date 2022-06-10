@@ -3,7 +3,9 @@ use std::{
     io::{stdin, stdout, Read, Write},
 };
 
+use atty::Stream;
 use clap::Parser;
+use color::highlight;
 
 /// Convert yaml to json
 #[derive(Parser, Debug)]
@@ -12,6 +14,14 @@ struct Args {
     /// Minify json output
     #[clap(short, long)]
     minify: bool,
+
+    /// Highlight json output
+    #[clap(short, long, conflicts_with = "no-color")]
+    color: bool,
+
+    /// Don't highlight json output
+    #[clap(short, long, conflicts_with = "color")]
+    no_color: bool,
 
     /// Path to a yaml file (default: stdin)
     #[clap()]
@@ -35,7 +45,11 @@ fn main() {
     }
     .expect("Failed to convert to json");
 
-    stdout()
-        .write_all(json.as_bytes())
-        .expect("Failed to write json");
+    if args.color || (!args.no_color && atty::is(Stream::Stdout)) {
+        highlight("json", &json, &mut stdout()).expect("Failed to highlight and write json");
+    } else {
+        stdout()
+            .write_all(json.as_bytes())
+            .expect("Failed to write json");
+    }
 }

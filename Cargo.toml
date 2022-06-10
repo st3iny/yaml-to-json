@@ -1,2 +1,2 @@
 [workspace]
-members = ["yaml-to-json", "json-to-yaml"]
+members = ["yaml-to-json", "json-to-yaml", "color"]

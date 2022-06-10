@@ -4,7 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+atty = "0.2"
 clap = { version = "3.1", features = ["derive"] }
+color = { path = "../color" }
 serde_json = "1"
 serde_yaml = "0"
 
