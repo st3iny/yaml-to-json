@@ -25,6 +25,11 @@ jobs:
           cargo run --package=yaml-to-json < testdata/test.yaml > test.out.json
           diff testdata/test.json test.out.json
 
+      - name: Test yaml-to-json --minify
+        run: |
+          cargo run --package=yaml-to-json -- --minify < testdata/test.yaml > test.min.out.json
+          diff testdata/test.min.json test.min.out.json
+
       - name: Test json-to-yaml
         run: |
           cargo run --package=json-to-yaml < testdata/test.json > test.out.yaml
