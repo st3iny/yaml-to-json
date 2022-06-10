@@ -1,0 +1,31 @@
+name: Build and test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  integration-tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Test yaml-to-json
+        run: |
+          cargo run --package=yaml-to-json < testdata/test.yaml > test.out.json
+          diff testdata/test.json test.out.json
+
+      - name: Test json-to-yaml
+        run: |
+          cargo run --package=json-to-yaml < testdata/test.json > test.out.yaml
+          diff testdata/test.yaml test.out.yaml
