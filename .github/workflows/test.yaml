@@ -11,7 +11,6 @@ env:
 
 jobs:
   integration-tests:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -20,9 +19,19 @@ jobs:
       - name: Build
         run: cargo build --verbose
 
-      - name: Test yaml-to-json
+      - name: Test yaml-to-json with implicit stdin
         run: |
           cargo run --package=yaml-to-json < testdata/test.yaml > test.out.json
+          diff testdata/test.json test.out.json
+
+      - name: Test yaml-to-json with explicit stdin
+        run: |
+          cargo run --package=yaml-to-json -- - < testdata/test.yaml > test.out.json
+          diff testdata/test.json test.out.json
+
+      - name: Test yaml-to-json with file input
+        run: |
+          cargo run --package=yaml-to-json -- testdata/test.yaml > test.out.json
           diff testdata/test.json test.out.json
 
       - name: Test yaml-to-json --minify
@@ -30,7 +39,17 @@ jobs:
           cargo run --package=yaml-to-json -- --minify < testdata/test.yaml > test.min.out.json
           diff testdata/test.min.json test.min.out.json
 
-      - name: Test json-to-yaml
+      - name: Test json-to-yaml with implicit stdin
         run: |
           cargo run --package=json-to-yaml < testdata/test.json > test.out.yaml
+          diff testdata/test.yaml test.out.yaml
+
+      - name: Test json-to-yaml with explicit stdin
+        run: |
+          cargo run --package=json-to-yaml -- - < testdata/test.json > test.out.yaml
+          diff testdata/test.yaml test.out.yaml
+
+      - name: Test json-to-yaml with file input
+        run: |
+          cargo run --package=json-to-yaml -- testdata/test.json > test.out.yaml
           diff testdata/test.yaml test.out.yaml
