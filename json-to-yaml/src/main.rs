@@ -10,7 +10,7 @@ use clap::Parser;
 #[clap(version)]
 struct Args {
     /// Path to a json file (default: stdin)
-    #[clap()]
+    #[clap(value_parser)]
     file: Option<String>,
 }
 

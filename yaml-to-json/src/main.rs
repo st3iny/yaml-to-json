@@ -10,11 +10,11 @@ use clap::Parser;
 #[clap(version)]
 struct Args {
     /// Minify json output
-    #[clap(short, long)]
+    #[clap(short, long, value_parser)]
     minify: bool,
 
     /// Path to a yaml file (default: stdin)
-    #[clap()]
+    #[clap(value_parser)]
     file: Option<String>,
 }
 
