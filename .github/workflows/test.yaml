@@ -10,7 +10,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  integration-tests:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,37 +19,66 @@ jobs:
       - name: Build
         run: cargo build --verbose
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-build
+          path: target/debug/?2?
+
+  integration-tests:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    strategy:
+      matrix:
+        data: [test, preserve-order]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: test-build
+          path: target/debug
+
+      - name: Extract binaries from artifact
+        run: |
+          mv -v target/debug/?2? ./
+          chmod -v +x ?2?
+
       - name: Test yaml-to-json with implicit stdin
         run: |
-          cargo run --package=yaml-to-json < testdata/test.yaml > test.out.json
-          diff testdata/test.json test.out.json
+          ./y2j < testdata/${{ matrix.data }}.yaml > ${{ matrix.data }}.out.json
+          diff testdata/${{ matrix.data }}.json ${{ matrix.data }}.out.json
 
       - name: Test yaml-to-json with explicit stdin
         run: |
-          cargo run --package=yaml-to-json -- - < testdata/test.yaml > test.out.json
-          diff testdata/test.json test.out.json
+          ./y2j - < testdata/${{ matrix.data }}.yaml > ${{ matrix.data }}.out.json
+          diff testdata/${{ matrix.data }}.json ${{ matrix.data }}.out.json
 
       - name: Test yaml-to-json with file input
         run: |
-          cargo run --package=yaml-to-json -- testdata/test.yaml > test.out.json
-          diff testdata/test.json test.out.json
+          ./y2j testdata/${{ matrix.data }}.yaml > ${{ matrix.data }}.out.json
+          diff testdata/${{ matrix.data }}.json ${{ matrix.data }}.out.json
 
       - name: Test yaml-to-json --minify
         run: |
-          cargo run --package=yaml-to-json -- --minify < testdata/test.yaml > test.min.out.json
-          diff testdata/test.min.json test.min.out.json
+          ./y2j --minify < testdata/${{ matrix.data }}.yaml > ${{ matrix.data }}.min.out.json
+          diff testdata/${{ matrix.data }}.min.json ${{ matrix.data }}.min.out.json
 
       - name: Test json-to-yaml with implicit stdin
         run: |
-          cargo run --package=json-to-yaml < testdata/test.json > test.out.yaml
-          diff testdata/test.yaml test.out.yaml
+          ./j2y < testdata/${{ matrix.data }}.json > ${{ matrix.data }}.out.yaml
+          diff testdata/${{ matrix.data }}.yaml ${{ matrix.data }}.out.yaml
 
       - name: Test json-to-yaml with explicit stdin
         run: |
-          cargo run --package=json-to-yaml -- - < testdata/test.json > test.out.yaml
-          diff testdata/test.yaml test.out.yaml
+          ./j2y - < testdata/${{ matrix.data }}.json > ${{ matrix.data }}.out.yaml
+          diff testdata/${{ matrix.data }}.yaml ${{ matrix.data }}.out.yaml
 
       - name: Test json-to-yaml with file input
         run: |
-          cargo run --package=json-to-yaml -- testdata/test.json > test.out.yaml
-          diff testdata/test.yaml test.out.yaml
+          ./j2y testdata/${{ matrix.data }}.json > ${{ matrix.data }}.out.yaml
+          diff testdata/${{ matrix.data }}.yaml ${{ matrix.data }}.out.yaml
