@@ -82,3 +82,36 @@ jobs:
         run: |
           ./j2y testdata/${{ matrix.data }}.json > ${{ matrix.data }}.out.yaml
           diff testdata/${{ matrix.data }}.yaml ${{ matrix.data }}.out.yaml
+
+  colorized-integration-tests:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    strategy:
+      matrix:
+        data: [color]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: test-build
+          path: target/debug
+
+      - name: Extract binaries from artifact
+        run: |
+          mv -v target/debug/?2? ./
+          chmod -v +x ?2?
+
+      - name: Test yaml-to-json --color=always
+        run: |
+          ./y2j --color=always < testdata/${{ matrix.data }}.yaml > ${{ matrix.data }}.out.json
+          diff testdata/${{ matrix.data }}.json ${{ matrix.data }}.out.json
+
+      - name: Test yaml-to-json --color=always --minify
+        run: |
+          ./y2j --color=always --minify < testdata/${{ matrix.data }}.yaml > ${{ matrix.data }}.min.out.json
+          diff testdata/${{ matrix.data }}.min.json ${{ matrix.data }}.min.out.json
