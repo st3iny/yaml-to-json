@@ -1,0 +1,6 @@
+---
+- true
+- "string\nwith\nbreaks"
+- 3.14
+- foo: bar
+  "null": ~
