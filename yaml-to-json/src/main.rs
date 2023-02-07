@@ -24,7 +24,7 @@ fn main() {
     let file: Box<dyn Read> = match args.file.as_deref() {
         Some("-") | None => Box::new(stdin()),
         Some(file) => {
-            Box::new(File::open(file).unwrap_or_else(|_| panic!("Failed to open {}", file)))
+            Box::new(File::open(file).unwrap_or_else(|_| panic!("Failed to open {file}")))
         }
     };
 
