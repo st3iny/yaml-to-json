@@ -20,7 +20,7 @@ jobs:
         run: cargo build --verbose
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: test-build
           path: target/debug/?2?
