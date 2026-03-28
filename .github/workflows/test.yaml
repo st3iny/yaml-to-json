@@ -32,7 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        data: [test, preserve-order]
+        data: [test, preserve-order, complex]
 
     steps:
       - uses: actions/checkout@v6
