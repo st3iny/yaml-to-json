@@ -1,2 +1,3 @@
 [workspace]
 members = ["yaml-to-json", "json-to-yaml"]
+resolver = "2"
